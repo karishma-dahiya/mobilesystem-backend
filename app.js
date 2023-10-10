@@ -68,8 +68,9 @@ app.get('/mobiles', function (req, res) {
         sql2 = sql2 + ((brand || RAM || ROM) ? ' AND ' : '') + query.join(' OR ');
     }
     if (conditions.length > 0) {
-        sql = sql + sql2;
+        sql = sql + sql2 ;
     }
+    sql = sql + ' ORDER BY id ASC';
     conn.query(sql, function (err, results) {
         if (err) {
           res.status(500).json({ error: 'Database Error', message: err.message });
@@ -82,9 +83,9 @@ app.get('/mobiles', function (req, res) {
 
 
 app.post('/mobiles', function (req, res) {
-    let { name, price, brand, RAM, ROM, OS } = req.body;
-    let values = [name, price, brand, RAM, ROM, OS];
-    let sql = 'INSERT INTO mobiles (name,price,brand,RAM,ROM,OS) VALUES ($1,$2,$3,$4,$5,$6) ';
+    let { name, price, brand, ram, rom, os } = req.body;
+    let values = [name, price, brand, ram, rom, os];
+    let sql = 'INSERT INTO mobiles (name, price, brand, ram, rom, os) VALUES ($1,$2,$3,$4,$5,$6) ';
     conn.query(sql,values, function (err, results) {
         if (err) {
             res.status(500).json({ error: 'Database Error', message: err.message });
@@ -94,9 +95,9 @@ app.post('/mobiles', function (req, res) {
     });
 });
 app.put('/mobiles/:id', function (req, res) {
-    let { id } = req.params;
-    let { name, price, brand, RAM, ROM, OS } = req.body;
-    let values = [name, price, brand, RAM, ROM, OS,id];
+    let  id  = +req.params.id;
+    let { name, price, brand, ram, rom, os } = req.body;
+    let values = [name, price, brand, ram, rom, os,id];
     let sql = `UPDATE mobiles 
                 SET name = $1, price = $2, brand=$3, RAM=$4, ROM=$5, OS=$6 
                 WHERE id =$7
@@ -110,7 +111,7 @@ app.put('/mobiles/:id', function (req, res) {
     });
 });
 app.delete('/mobiles/:id', function (req, res) {
-    let id = req.params.id;
+    let id = +req.params.id;
     let sql = 'DELETE FROM mobiles WHERE id=$1 ';
     conn.query(sql,[id], function (err, results) {
         if (err) {
